@@ -4,15 +4,15 @@ import 'dart:js';
 
 import 'package:flutter/material.dart';
 import 'package:login_signup_app/APIRequest.dart';
-import 'package:login_signup_app/link.dart';
-import 'package:login_signup_app/request.dart';
+// import 'package:login_signup_app/link.dart';
+// import 'package:login_signup_app/request.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final APIRequest apiRequest = APIRequest(baseURL: 'http://127.0.0.1:8000/api/');
+  final APIRequest apiRequest = APIRequest(baseURL: 'http://127.0.0.1:8000/api');
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => SignUpPage(),
-        '/login': (context) => LoginPage(),
+        '/': (context) => SignUpPage(apiRequest: apiRequest,),
+        '/login': (context) => LoginPage(apiRequest: apiRequest,),
       },
     );
   }
@@ -36,22 +36,11 @@ class SignUpPage extends StatelessWidget {
   SignUpPage({required this.apiRequest});
 
   final _formKey = GlobalKey<FormState>();
-  Info _info = Info();
+
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  // signUp() async {
-  //   var res = await _info.postReq(LinkSignUp, {
-  //     "userName": _usernameController.text,
-  //     "password": _passwordController.text,
-  //     "email": _emailController.text,
-  //   });
-  //   // if (res['status'] == 'success') {
-  //   //   Navigator.of( context).pushNamed('/login');
-  //   // } else {
-
-  //   // }
-  // }
+  
   signUp() async {
     try {
       var res = await apiRequest.postRequest('reqister', {
@@ -158,7 +147,7 @@ class LoginPage extends StatelessWidget {
   final APIRequest apiRequest;
 
   LoginPage({required this.apiRequest});
-  
+
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
