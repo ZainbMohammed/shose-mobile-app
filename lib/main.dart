@@ -1,6 +1,9 @@
 // import 'dart:js';
 
+import 'dart:js';
+
 import 'package:flutter/material.dart';
+import 'package:login_signup_app/APIRequest.dart';
 import 'package:login_signup_app/link.dart';
 import 'package:login_signup_app/request.dart';
 
@@ -9,6 +12,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  final APIRequest apiRequest = APIRequest(baseURL: 'http://127.0.0.1:8000/api/');
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,26 +31,52 @@ class MyApp extends StatelessWidget {
 }
 
 class SignUpPage extends StatelessWidget {
+  final APIRequest apiRequest;
+
+  SignUpPage({required this.apiRequest});
+
   final _formKey = GlobalKey<FormState>();
   Info _info = Info();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  signUp() async {
-    var res = await _info.postReq(LinkSignUp, {
-      "userName": _usernameController.text,
-      "password": _passwordController.text,
-      "email": _emailController.text,
-    });
-    // if (res['status'] == 'success') {
-    //   Navigator.of( context).pushNamed('/login');
-    // } else {
-      
-    // }
-    
-    
-  }
+  // signUp() async {
+  //   var res = await _info.postReq(LinkSignUp, {
+  //     "userName": _usernameController.text,
+  //     "password": _passwordController.text,
+  //     "email": _emailController.text,
+  //   });
+  //   // if (res['status'] == 'success') {
+  //   //   Navigator.of( context).pushNamed('/login');
+  //   // } else {
 
+  //   // }
+  // }
+  signUp() async {
+    try {
+      var res = await apiRequest.postRequest('reqister', {
+        "name": _usernameController.text,
+        "email": _emailController.text,
+        "password": _passwordController.text,
+      });
+
+      if (res['status'] == 'success') {
+        Navigator.of(context as BuildContext).pushNamed('/login');
+      } else {
+        ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+          SnackBar(
+            content: Text('Sign up failed: ${res['message']}'),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to connect to the server'),
+        ),
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,13 +125,13 @@ class SignUpPage extends StatelessWidget {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     // Process sign up
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text('Sign up successful!'),
                       ),
                     );
@@ -108,12 +139,12 @@ class SignUpPage extends StatelessWidget {
                 },
                 child: Text('Sign Up'),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/login');
                 },
-                child: Text('Already have an account? Log in'),
+                child: const Text('Already have an account? Log in'),
               ),
             ],
           ),
@@ -124,15 +155,46 @@ class SignUpPage extends StatelessWidget {
 }
 
 class LoginPage extends StatelessWidget {
+  final APIRequest apiRequest;
+
+  LoginPage({required this.apiRequest});
+  
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  login() async {
+    try {
+      var res = await apiRequest.postRequest('login', {
+        "email": _emailController.text,
+        "password": _passwordController.text,
+      });
 
+      if (res['status'] == 'success') {
+        ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+          const SnackBar(
+            content: Text('Login successful!'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+          SnackBar(
+            content: Text('Login failed: ${res['message']}'),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to connect to the server'),
+        ),
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -143,7 +205,7 @@ class LoginPage extends StatelessWidget {
             children: [
               TextFormField(
                 controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Please enter your email';
@@ -157,7 +219,7 @@ class LoginPage extends StatelessWidget {
               ),
               TextFormField(
                 controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -166,13 +228,13 @@ class LoginPage extends StatelessWidget {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     // Process login
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text('Login successful!'),
                       ),
                     );
@@ -180,12 +242,12 @@ class LoginPage extends StatelessWidget {
                 },
                 child: Text('Login'),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('Don\'t have an account? Sign up'),
+                child: const Text('Don\'t have an account? Sign up'),
               ),
             ],
           ),
