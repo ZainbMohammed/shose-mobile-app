@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => SignUpPage(apiRequest: apiRequest,),
-        '/login': (context) => LoginPage(apiRequest: apiRequest,),
+        '/': (context) => SignUpPage(apiRequest: apiRequest,context: context,),
+        '/login': (context) => LoginPage(apiRequest: apiRequest,context: context,),
       },
     );
   }
@@ -32,8 +32,8 @@ class MyApp extends StatelessWidget {
 
 class SignUpPage extends StatelessWidget {
   final APIRequest apiRequest;
-
-  SignUpPage({required this.apiRequest});
+  final BuildContext context; // Add this line
+  SignUpPage({required this.apiRequest,required this.context});
 
   final _formKey = GlobalKey<FormState>();
 
@@ -50,16 +50,16 @@ class SignUpPage extends StatelessWidget {
       });
 
       if (res['status'] == 'success') {
-        Navigator.of(context as BuildContext).pushNamed('/login');
+        Navigator.of(context).pushNamed('/login');
       } else {
-        ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Sign up failed: ${res['message']}'),
           ),
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Failed to connect to the server'),
         ),
@@ -145,8 +145,8 @@ class SignUpPage extends StatelessWidget {
 
 class LoginPage extends StatelessWidget {
   final APIRequest apiRequest;
-
-  LoginPage({required this.apiRequest});
+  final BuildContext context; // Add this line
+  LoginPage({required this.apiRequest,required this.context});
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
@@ -165,14 +165,14 @@ class LoginPage extends StatelessWidget {
           ),
         );
       } else {
-        ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Login failed: ${res['message']}'),
           ),
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Failed to connect to the server'),
         ),
