@@ -12,15 +12,19 @@ class APIRequest {
       var response = await http.post(
         Uri.parse('$baseURL/$endpoint'),
         body: jsonEncode(data),
-        headers: {'Content-Type': 'application/json'},
+        // headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 200) {
+        print("request successful");
         return jsonDecode(response.body);
+        
       } else {
+        print("request faield");
         throw Exception('Failed to load data');
       }
     } catch (e) {
+      print("Exception");
       throw Exception('Failed to connect to the server');
     }
   }

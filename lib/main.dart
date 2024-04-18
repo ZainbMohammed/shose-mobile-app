@@ -1,6 +1,6 @@
 // import 'dart:js';
 
-import 'dart:js';
+// import 'dart:js';
 
 import 'package:flutter/material.dart';
 import 'package:login_signup_app/APIRequest.dart';
@@ -12,7 +12,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  final APIRequest apiRequest = APIRequest(baseURL: 'http://127.0.0.1:8000/api');
+  final APIRequest apiRequest =
+      APIRequest(baseURL: 'http://127.0.0.1:8000/api');
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +24,14 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => SignUpPage(apiRequest: apiRequest,context: context,),
-        '/login': (context) => LoginPage(apiRequest: apiRequest,context: context,),
+        '/': (context) => SignUpPage(
+              apiRequest: apiRequest,
+              context: context,
+            ),
+        '/login': (context) => LoginPage(
+              apiRequest: apiRequest,
+              context: context,
+            ),
       },
     );
   }
@@ -33,17 +40,17 @@ class MyApp extends StatelessWidget {
 class SignUpPage extends StatelessWidget {
   final APIRequest apiRequest;
   final BuildContext context; // Add this line
-  SignUpPage({required this.apiRequest,required this.context});
+  SignUpPage({required this.apiRequest, required this.context});
 
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  
+
   signUp() async {
     try {
-      var res = await apiRequest.postRequest('reqister', {
+      var res = await apiRequest.postRequest('register', {
         "name": _usernameController.text,
         "email": _emailController.text,
         "password": _passwordController.text,
@@ -66,6 +73,7 @@ class SignUpPage extends StatelessWidget {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,14 +124,15 @@ class SignUpPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async{
                   if (_formKey.currentState!.validate()) {
                     // Process sign up
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Sign up successful!'),
-                      ),
-                    );
+                    await signUp();
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    //   const SnackBar(
+                    //     content: Text('Sign up successful!'),
+                    //   ),
+                    // );
                   }
                 },
                 child: Text('Sign Up'),
@@ -146,7 +155,7 @@ class SignUpPage extends StatelessWidget {
 class LoginPage extends StatelessWidget {
   final APIRequest apiRequest;
   final BuildContext context; // Add this line
-  LoginPage({required this.apiRequest,required this.context});
+  LoginPage({required this.apiRequest, required this.context});
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
@@ -165,7 +174,7 @@ class LoginPage extends StatelessWidget {
           ),
         );
       } else {
-         ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Login failed: ${res['message']}'),
           ),
@@ -179,6 +188,7 @@ class LoginPage extends StatelessWidget {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
