@@ -15,7 +15,7 @@ class APIRequest {
         // headers: {'Content-Type': 'application/json'},
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         print("request successful");
         return jsonDecode(response.body);
         
